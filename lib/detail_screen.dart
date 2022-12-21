@@ -41,7 +41,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     setState(() {
       moviePoster = movieDetail['Poster'];
-      if (moviePoster == null) {
+      if (moviePoster == 'N/A' || moviePoster == null) {
         poster = false;
       } else {
         poster = true;

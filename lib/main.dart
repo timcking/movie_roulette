@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Visibility(
-                child: SpinKitHourGlass(
+                child: SpinKitThreeBounce(
                   color: Colors.purple,
                   size: 50.0,
                 ),
