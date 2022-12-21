@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var movieDetail;
   var randomMovie;
   var dbPath;
-  static const int MAX_MOVIES = 10;
+  static const int MAX_MOVIES = 12;
   static const String DATABASE = 'movies.db';
   bool showSpin = false;
 
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // TCK, have to manually copy the database file from assets to app dir
     // Construct the path to the app's writable database file:
     var dbDir = await getDatabasesPath();
-    dbPath = p.join(dbDir, "movies.db");
+    dbPath = p.join(dbDir, DATABASE);
 
     // Delete any existing database:
     // ToDo: check if database exists
@@ -69,8 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!exists) {
       // Create the writable database file from the bundled database file:
-      ByteData data = await rootBundle.load("assets/movies.db");
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      ByteData data = await rootBundle.load("assets/$DATABASE");
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(dbPath).writeAsBytes(bytes);
     }
   }
@@ -84,7 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     var db = await openDatabase(dbPath);
-    String sql = 'SELECT title_id FROM movie_list ORDER BY RANDOM() LIMIT 10';
+    String sql =
+        'SELECT title_id FROM movie_list ORDER BY RANDOM() LIMIT $MAX_MOVIES';
     listRandom = await db.rawQuery(sql);
 
     for (int i = 0; i < MAX_MOVIES; i++) {
@@ -107,10 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       showSpin = false;
     });
-
   }
 
-  void getMovieDetail (String movieId) async {
+  void getMovieDetail(String movieId) async {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return DetailScreen(imdbId: movieId);
     }));
@@ -130,22 +131,29 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Container(
                 padding: EdgeInsets.all(20.0),
-                child:
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14.0),
+                child: ElevatedButton(
+                  child: const Text(
+                    '  Spin  ',
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.deepOrange.shade900,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)), // foreground
                   ),
                   onPressed: () {
                     buildRandomMovies();
                   },
-                  child: Text(
-                    '     Spin     ',
-                    style: kButtonTextStyle,
-                  ),
                 ),
               ),
               Visibility(
-                child: SpinKitThreeBounce(
+                child: SpinKitHourGlass(
                   color: Colors.purple,
                   size: 50.0,
                 ),
@@ -158,19 +166,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       Divider(),
                   itemBuilder: (context, index) {
                     return ListTile(
+                      dense: true,
                       onTap: () {
                         getMovieDetail(listRndImdbId[index]);
                       },
                       title: Align(
-                        child: Text(
-                          listRndTitle[index],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0, // insert your font size here
+                          child: Text(
+                            listRndTitle[index],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0, // insert your font size here
+                            ),
                           ),
-                        ),
-                        alignment: Alignment.centerLeft
-                      ),
+                          alignment: Alignment.centerLeft),
                       subtitle: Align(
                         child: Text(
                           listRndYear[index],

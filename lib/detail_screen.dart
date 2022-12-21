@@ -16,6 +16,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   Movie movie = Movie();
   var movieDetail;
+  bool poster = false;
 
   String imdbDetailId = '';
   String movieTitle = '';
@@ -39,9 +40,15 @@ class _DetailScreenState extends State<DetailScreen> {
     movieDetail = await movie.getMovieDetail(imdbDetailId);
 
     setState(() {
+      moviePoster = movieDetail['Poster'];
+      if (moviePoster == null) {
+        poster = false;
+      } else {
+        poster = true;
+      }
+
       movieTitle = movieDetail['Title'];
       movieYear = movieDetail['Year'];
-      moviePoster = movieDetail['Poster'];
       movieDirector = movieDetail['Director'];
       movieRuntime = movieDetail['Runtime'];
       movieRated = movieDetail['Rated'];
@@ -67,13 +74,13 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onTap: _launchURL,
-            child: Text('$movieTitle',
+            onTap: _launchURL,
+            child: Text(
+              '$movieTitle',
               style: TextStyle(
                 decoration: TextDecoration.underline,
               ),
-            )
-        ),
+            )),
       ),
       body: Container(
         padding: new EdgeInsets.all(20.0),
@@ -86,11 +93,13 @@ class _DetailScreenState extends State<DetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(height: 10.0),
-            Image(
-              image: NetworkImage(moviePoster),
-              height: 140,
-              width: 160,
-            ),
+            poster
+                ? Image(
+                    image: NetworkImage(moviePoster),
+                    height: 140,
+                    width: 160,
+                  )
+                : Container(),
             SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
