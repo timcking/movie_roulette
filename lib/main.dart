@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var db = await openDatabase(dbPath);
     String sql =
-        'SELECT title_id FROM movie_list ORDER BY RANDOM() LIMIT $MAX_MOVIES';
+        'SELECT title_id FROM movie_titles ORDER BY RANDOM() LIMIT $MAX_MOVIES';
     listRandom = await db.rawQuery(sql);
 
     for (int i = 0; i < MAX_MOVIES; i++) {
